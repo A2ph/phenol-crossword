@@ -1,104 +1,52 @@
-// Crossword Game Logic
+// Game Logic for Two-Team Crossword Game
 
-// Game Configuration
-const keywords = ["apple", "banana", "cherry", "date", "fig", "grape"];  
+// Keywords
+const keywords = ["crossword", "clue", "answer", "team1", "team2"];
+
+// Game State Management
 let gameState = {
-    teamOneScore: 0,
-    teamTwoScore: 0,
-    currentTeam: 1,
-    lockedKeywords: [],
-    attempts: {
-        teamOne: 0,
-        teamTwo: 0,
-    }
+    currentTeam: "team1",
+    scores: { team1: 0, team2: 0 },
+    board: [],
+    currentClue: null,
 };
 
-// Initialize the game
-function initGame() {
-    renderCrosswordGrid();
-    renderClues();
-    addEventListeners();
+// Initialize the game board
+function initializeBoard(size) {
+    gameState.board = Array.from({ length: size }, () => Array(size).fill(null));
 }
 
-// Render crossword grid
-function renderCrosswordGrid() {
-    const gridContainer = document.getElementById('crossword-grid');
-    // Logic to create and render the crossword grid
-}
-
-// Render clues for the crossword
-function renderClues() {
-    const cluesContainer = document.getElementById('clues');
-    // Logic to display clues
-}
-
-// Add event listeners for answer submissions
-function addEventListeners() {
-    document.getElementById('submit-answer').addEventListener('click', submitAnswer);
-}
-
-// Submit answer logic
-function submitAnswer() {
-    const answerInput = document.getElementById('answer-input').value;
-    const currentKeyword = getCurrentKeyword();
-    if (lockedKeywords.includes(currentKeyword)) {
-        alert('This keyword is locked!');
-        return;
-    }
-    if (answerInput.toLowerCase() === currentKeyword.toLowerCase()) {
-        updateScore();
-        alert('Correct! 10 points awarded.');
-    } else {
-        handleWrongAnswer();
-    }
-    document.getElementById('answer-input').value = ''; // Clear input
-}
-
-// Handle wrong answer logic
-function handleWrongAnswer() {
-    if (gameState.currentTeam === 1) {
-        gameState.attempts.teamOne++;
-        gameState.currentTeam = 2;
-        if (gameState.attempts.teamOne >= 2) {
-            lockKeyword();
-        }
-    } else {
-        gameState.attempts.teamTwo++;
-        gameState.currentTeam = 1;
-        if (gameState.attempts.teamTwo >= 2) {
-            lockKeyword();
-        }
-    }
-    alert('Wrong answer! Switching to Team ' + gameState.currentTeam);
-}
-
-// Update score based on current team
-function updateScore() {
-    if (gameState.currentTeam === 1) {
-        gameState.teamOneScore += 10;
-    } else {
-        gameState.teamTwoScore += 10;
+// Submit Answer Function
+function submitAnswer(answer) {
+    if (gameState.currentClue && answer === gameState.currentClue.answer) {
+        gameState.scores[gameState.currentTeam] += 1;
+        nextClue();
     }
 }
 
-// Lock the keyword
-function lockKeyword() {
-    const currentKeyword = getCurrentKeyword();
-    gameState.lockedKeywords.push(currentKeyword);
-    resetAttempts();
-    alert('Keyword locked: ' + currentKeyword);
+// Switch Teams Function
+function switchTeam() {
+    gameState.currentTeam = gameState.currentTeam === "team1" ? "team2" : "team1";
 }
 
-// Get current keyword (to be implemented based on game state)
-function getCurrentKeyword() {
-    // Logic to return the current keyword being guessed
+// Next Clue Function
+function nextClue() {
+    // Logic to select the next clue
+    gameState.currentClue = pickNextClue();
+    switchTeam();
 }
 
-// Reset attempts after locking a keyword
-function resetAttempts() {
-    gameState.attempts.teamOne = 0;
-    gameState.attempts.teamTwo = 0;
+// Dummy function for picking the next clue
+function pickNextClue() {
+    return { prompt: "New Clue", answer: "correctAnswer" };
 }
 
-// Start the game
-initGame();
+// Start Game Function
+function startGame(size) {
+    initializeBoard(size);
+    nextClue();
+}
+
+// Example Usage
+startGame(5); // Start a 5x5 crossword game
+console.log(gameState);
