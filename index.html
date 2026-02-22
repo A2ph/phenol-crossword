@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phenol Crossword Game</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Trò Chơi Ô Chữ Phenol</h1>
+        
+        <div class="scoreboard">
+            <div class="team red-team">
+                <h2>🔴 Đ��i Đỏ</h2>
+                <p id="redScore">Điểm: 0</p>
+            </div>
+            <div class="team blue-team">
+                <h2>🔵 Đội Xanh</h2>
+                <p id="blueScore">Điểm: 0</p>
+            </div>
+        </div>
+
+        <div class="game-info">
+            <p id="currentTurn">Lượt hiện tại: <span id="turnTeam">Đội Đỏ</span></p>
+            <p id="gameStatus">Sẵn sàng để chơi!</p>
+        </div>
+
+        <div class="game-board">
+            <div class="clues-section">
+                <h3>Các Từ Khóa</h3>
+                <div id="cluesList" class="clues-list"></div>
+            </div>
+
+            <div class="crossword-section">
+                <div id="crossword" class="crossword-grid"></div>
+            </div>
+        </div>
+
+        <div class="input-section">
+            <input type="text" id="answerInput" placeholder="Nhập đáp án..."><button id="submitBtn">Xác Nhận</button>
+            <button id="resetBtn">Bắt Đầu Lại</button>
+        </div>
+
+        <div id="modal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h2 id="modalTitle"></h2>
+                <p id="modalMessage"></p>
+            </div>
+        </div>
+    </div>
+
+    <script src="game.js"></script>
+</body>
+</html>
