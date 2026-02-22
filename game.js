@@ -1,54 +1,104 @@
-const gameData = {
-    keywords: ["HYDROXYL", "TRIHYDROXYBENZENE", "C6H4OHR", "ETHANOL", "NHUOMHONG", "PHENOL", "NHUTƯƠNG", "NHIETDOSOI", "DELOCALIZED"],
-};
+// Crossword Game Logic
 
+// Game Configuration
+const keywords = ["apple", "banana", "cherry", "date", "fig", "grape"];  
 let gameState = {
-    redTeam: { score: 0, attempts: 0 },
-    blueTeam: { score: 0, attempts: 0 },
-    currentTeam: 'red',
+    teamOneScore: 0,
+    teamTwoScore: 0,
+    currentTeam: 1,
+    lockedKeywords: [],
+    attempts: {
+        teamOne: 0,
+        teamTwo: 0,
+    }
 };
 
-const gridElement = document.getElementById('crossword-grid');
-const clueElement = document.getElementById('clue-selection');
-const notificationModal = document.getElementById('notification-modal');
-
-function lockTeam() {
-    const lockedTeam = gameState.currentTeam;
-    // Logic to lock the current team after 2 wrong attempts
+// Initialize the game
+function initGame() {
+    renderCrosswordGrid();
+    renderClues();
+    addEventListeners();
 }
 
-function switchTurn() {
-    gameState.currentTeam = gameState.currentTeam === 'red' ? 'blue' : 'red';
+// Render crossword grid
+function renderCrosswordGrid() {
+    const gridContainer = document.getElementById('crossword-grid');
+    // Logic to create and render the crossword grid
 }
 
-function submitAnswer(answer) {
-    const currentTeam = gameState[gameState.currentTeam];
-    if (gameData.keywords.includes(answer)) {
-        currentTeam.score += 10;
-        // Update UI accordingly
-        updateUI();
-        notify(`${gameState.currentTeam} team scored!`);
+// Render clues for the crossword
+function renderClues() {
+    const cluesContainer = document.getElementById('clues');
+    // Logic to display clues
+}
+
+// Add event listeners for answer submissions
+function addEventListeners() {
+    document.getElementById('submit-answer').addEventListener('click', submitAnswer);
+}
+
+// Submit answer logic
+function submitAnswer() {
+    const answerInput = document.getElementById('answer-input').value;
+    const currentKeyword = getCurrentKeyword();
+    if (lockedKeywords.includes(currentKeyword)) {
+        alert('This keyword is locked!');
+        return;
+    }
+    if (answerInput.toLowerCase() === currentKeyword.toLowerCase()) {
+        updateScore();
+        alert('Correct! 10 points awarded.');
     } else {
-        currentTeam.attempts += 1;
-        if (currentTeam.attempts >= 2) {
-            lockTeam();
-        } else {
-            notify(`Wrong answer, ${gameState.currentTeam} team, try again!`);
-            switchTurn();
+        handleWrongAnswer();
+    }
+    document.getElementById('answer-input').value = ''; // Clear input
+}
+
+// Handle wrong answer logic
+function handleWrongAnswer() {
+    if (gameState.currentTeam === 1) {
+        gameState.attempts.teamOne++;
+        gameState.currentTeam = 2;
+        if (gameState.attempts.teamOne >= 2) {
+            lockKeyword();
         }
+    } else {
+        gameState.attempts.teamTwo++;
+        gameState.currentTeam = 1;
+        if (gameState.attempts.teamTwo >= 2) {
+            lockKeyword();
+        }
+    }
+    alert('Wrong answer! Switching to Team ' + gameState.currentTeam);
+}
+
+// Update score based on current team
+function updateScore() {
+    if (gameState.currentTeam === 1) {
+        gameState.teamOneScore += 10;
+    } else {
+        gameState.teamTwoScore += 10;
     }
 }
 
-function updateUI() {
-    // Logic to update the UI elements based on the game state
+// Lock the keyword
+function lockKeyword() {
+    const currentKeyword = getCurrentKeyword();
+    gameState.lockedKeywords.push(currentKeyword);
+    resetAttempts();
+    alert('Keyword locked: ' + currentKeyword);
 }
 
-function notify(message) {
-    notificationModal.innerText = message;
-    notificationModal.style.display = 'block';
-    setTimeout(() => {
-        notificationModal.style.display = 'none';
-    }, 3000);
+// Get current keyword (to be implemented based on game state)
+function getCurrentKeyword() {
+    // Logic to return the current keyword being guessed
 }
 
-// Additional functionalities here to handle DOM elements for crossword grid and clue selection.
+// Reset attempts after locking a keyword
+function resetAttempts() {
+    gameState.attempts.teamOne = 0;
+    gameState.attempts.teamTwo = 0;
+}
+
+// Start the game
+initGame();
