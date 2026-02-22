@@ -1,58 +1,54 @@
-// game.js
+const gameData = {
+    keywords: ["HYDROXYL", "TRIHYDROXYBENZENE", "C6H4OHR", "ETHANOL", "NHUOMHONG", "PHENOL", "NHUTƯƠNG", "NHIETDOSOI", "DELOCALIZED"],
+};
 
-// Game data
-const teams = [{ name: 'Team A', score: 0, correctAnswers: 0 }, { name: 'Team B', score: 0, correctAnswers: 0 }];
-const keywords = [{ word: 'JavaScript', attempts: 0, locked: false }, { word: 'HTML', attempts: 0, locked: false }, { word: 'CSS', attempts: 0, locked: false }];
+let gameState = {
+    redTeam: { score: 0, attempts: 0 },
+    blueTeam: { score: 0, attempts: 0 },
+    currentTeam: 'red',
+};
 
-let currentTeamIndex = 0;
+const gridElement = document.getElementById('crossword-grid');
+const clueElement = document.getElementById('clue-selection');
+const notificationModal = document.getElementById('notification-modal');
 
-// State management
-function getCurrentTeam() {
-    return teams[currentTeamIndex];
+function lockTeam() {
+    const lockedTeam = gameState.currentTeam;
+    // Logic to lock the current team after 2 wrong attempts
 }
 
-function nextTurn() {
-    currentTeamIndex = (currentTeamIndex + 1) % teams.length;
+function switchTurn() {
+    gameState.currentTeam = gameState.currentTeam === 'red' ? 'blue' : 'red';
 }
 
-function lockKeyword(keyword) {
-    const foundKeyword = keywords.find(k => k.word === keyword);
-    if (foundKeyword) {
-        foundKeyword.locked = true;
-    }
-}
-
-// Rendering functions
-function renderScoreboard() {
-    console.log('Scoreboard:');
-    teams.forEach(team => {
-        console.log(`${team.name}: ${team.score} points`);
-    });
-}
-
-// Event handlers
-function answerQuestion(keyword, isCorrect) {
-    const currentTeam = getCurrentTeam();
-    if (isCorrect) {
+function submitAnswer(answer) {
+    const currentTeam = gameState[gameState.currentTeam];
+    if (gameData.keywords.includes(answer)) {
         currentTeam.score += 10;
-        currentTeam.correctAnswers += 1;
-        console.log(`${currentTeam.name} answered correctly!`);
+        // Update UI accordingly
+        updateUI();
+        notify(`${gameState.currentTeam} team scored!`);
     } else {
-        currentTeam.score -= currentTeam.score > 0 ? 0 : 0;  // Prevent negative scores
-        const foundKeyword = keywords.find(k => k.word === keyword);
-        if (foundKeyword) {
-            foundKeyword.attempts += 1;
-            console.log(`${currentTeam.name} answered incorrectly! Attempts: ${foundKeyword.attempts}`);
-            if (foundKeyword.attempts >= 2) {
-                lockKeyword(keyword);
-                console.log(`${keyword} is now locked!`);
-            }
+        currentTeam.attempts += 1;
+        if (currentTeam.attempts >= 2) {
+            lockTeam();
+        } else {
+            notify(`Wrong answer, ${gameState.currentTeam} team, try again!`);
+            switchTurn();
         }
     }
-    renderScoreboard();
-    nextTurn();
 }
 
-// Initialize the game
-console.log('Game started!');
-renderScoreboard();
+function updateUI() {
+    // Logic to update the UI elements based on the game state
+}
+
+function notify(message) {
+    notificationModal.innerText = message;
+    notificationModal.style.display = 'block';
+    setTimeout(() => {
+        notificationModal.style.display = 'none';
+    }, 3000);
+}
+
+// Additional functionalities here to handle DOM elements for crossword grid and clue selection.
